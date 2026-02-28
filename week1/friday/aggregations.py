@@ -86,11 +86,24 @@ print("\n--- Task 3: GroupBy Multiple Aggregations ---")
 # - Highest single sale
 # Use meaningful aliases!
 
+df.groupBy("category").agg( count("*").alias("transaction_count"),
+    sum("amount").alias("total_revenue"),
+    avg("amount").alias("avg_sale_amount"),
+    max("amount").alias("highest_single_sale"),
+).show()
+
+
 
 # TODO 3b: For each salesperson, calculate:
 # - Number of sales
 # - Total revenue
 # - Distinct products sold (countDistinct)
+
+df.groupBy("salesperson").agg(
+    count("*").alias("total_sales"),
+    sum("amount").alias("total_revenue"),
+    countDistinct("product").alias("distinct_prod_sold")
+).show()
 
 
 # =============================================================================
@@ -100,9 +113,13 @@ print("\n--- Task 3: GroupBy Multiple Aggregations ---")
 print("\n--- Task 4: Multi-Column GroupBy ---")
 
 # TODO 4a: Calculate total sales by month AND category
+df.groupBy("month", "category").agg(sum("amount").alias("total_sales")).show()
 
 
 # TODO 4b: Find the top salesperson by month (hint: use multi-column groupBy)
+# im stuck with this one
+df.groupBy("month", "salesperson").agg(sum("amount").alias("total_sales")).groupBy("month").agg(max("total_sales")).show()
+
 
 
 # =============================================================================
@@ -112,13 +129,13 @@ print("\n--- Task 4: Multi-Column GroupBy ---")
 print("\n--- Task 5: Filtering After Aggregation ---")
 
 # TODO 5a: Find categories with total revenue > 2000
-
+df.groupBy("category").agg(sum("amount").alias("total_revenue")).filter(col("total_revenue") > 2000).show()
 
 # TODO 5b: Find salespeople who made more than 2 transactions
-
+df.groupBy("salesperson").agg(count("*").alias("count_transactions")).filter(col("count_transactions") > 2).show()
 
 # TODO 5c: Find month-category combinations with average sale > 500
-
+df.groupBy("month", "category").agg(avg("amount").alias("avg_sale")).filter(col("avg_sale") > 500).show()
 
 # =============================================================================
 # CHALLENGE: Business Questions (20 mins)
