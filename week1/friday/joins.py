@@ -144,10 +144,12 @@ print("\n--- Task 6: Multi-Table Join ---")
 
 # TODO 6a: Join customers -> orders -> products
 # Show: customer name, order_id, amount, product_name
-
+customers.alias("c").join(orders.alias("o"), col("c.customer_id") == col("o.customer_id"),)\
+    .join(products.alias("p"), col("o.order_id") == col("p.order_id")) \
+    .select("c.name", "o.order_id", "o.amount", "p.product_name").show()
 
 # TODO 6b: What kind of join should you use when some orders might not have products?
-
+# A left join between orders and products so that all orders will be included even if they dont have a product match.
 
 # =============================================================================
 # CHALLENGE: Real-World Scenarios (20 mins)
